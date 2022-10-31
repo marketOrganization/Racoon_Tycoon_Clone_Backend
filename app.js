@@ -35,7 +35,12 @@ Socketio.on("connection", socket => {
 
 const PORT = process.env.PORT
 
-Http.get('/', (req,res) => {res.send({message:"i am root"})})
+Http.use(cors(),function(req, res, next) {
+    res.header("Access-Control-Allow-Origin", "*"); // update to match the domain you will make the request from
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    next();
+  });
+Http.use('/', (req,res) => {res.send({message:"i am root"})})
 
 Http.listen(PORT, () => {
     console.log(`listening on port : ${PORT}...`)
