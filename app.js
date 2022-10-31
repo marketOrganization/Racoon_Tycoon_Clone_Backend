@@ -1,4 +1,5 @@
 const Express = require('express')
+const { appendFile } = require('fs')
 const Http = require("http").Server(Express)
 const Socketio = require("socket.io")(Http)
 
@@ -32,7 +33,10 @@ Socketio.on("connection", socket => {
     })
 })
 
-const PORT = process.env.PORT || 3000
+const PORT = process.env.PORT
+
+Http.get('/', (req,res) => {res.send({message:"i am root"})})
+
 Http.listen(PORT, () => {
     console.log(`listening on port : ${PORT}...`)
 })
