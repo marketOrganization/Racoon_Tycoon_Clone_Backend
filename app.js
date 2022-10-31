@@ -32,6 +32,8 @@ Socketio.on("connection", socket => {
     })
 })
 
-Http.listen(3000, () => {
-    console.log("listening on port :3000...")
+const PORT = process.env.port
+
+Http.listen(PORT, () => {
+    console.log(`listening on port : ${PORT}...`)
 })
