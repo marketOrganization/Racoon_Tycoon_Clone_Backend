@@ -1,5 +1,4 @@
 const Express = require('express')
-const { appendFile } = require('fs')
 const Http = require("http").Server(Express)
 const Socketio = require("socket.io")(Http)
 
@@ -33,14 +32,7 @@ Socketio.on("connection", socket => {
     })
 })
 
-const PORT = process.env.PORT
-
-Http.use(cors(),function(req, res, next) {
-    res.header("Access-Control-Allow-Origin", "*"); // update to match the domain you will make the request from
-    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-    next();
-  });
-Http.use('/', (req,res) => {res.send({message:"i am root"})})
+const PORT = process.env.PORT || 3000
 
 Http.listen(PORT, () => {
     console.log(`listening on port : ${PORT}...`)
