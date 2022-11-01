@@ -6,34 +6,19 @@ const Socketio = require("socket.io")(Http, {
     }
 })
 
-let position = {
-    x : 200,
-    y : 200
+// global variable of such you can alter
+let variable = {
+
 }
 
 Socketio.on("connection", socket => {
-    socket.emit("position", position);
-
-    socket.on("move", data => {
-        switch (data) {
-            case "left": 
-                position.x -= 10;
-                Socketio.emit("position", position);
-                break;
-            case "right": 
-                position.x += 10;
-                Socketio.emit("position", position);
-                break;
-            case "up": 
-                position.y -= 10;
-                Socketio.emit("position", position);
-                break;
-            case "down": 
-                position.y += 10;
-                Socketio.emit("position", position);
-                break;
-        }
+    socket.on("eventName", dataPassedWithEvent => {
+        //do something with the data
+        //emit an event with some new data
+        socket.emit("response event", modeifiedData)
     })
+
+    //wil have many of these
 })
 
 const PORT = process.env.PORT || 3000
