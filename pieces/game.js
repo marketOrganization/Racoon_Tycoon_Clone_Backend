@@ -23,11 +23,10 @@ class Game {
         this.avaiableBuildingThree = {},
         this.avaiableBuildingFour = {},
         this.avaiableTown = {}
-
     }
     //what attributes does a game have that 
     initalizeBoard(numPlayers){
-
+        
     }
     
 }
