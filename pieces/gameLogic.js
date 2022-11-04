@@ -1,5 +1,5 @@
 const pieces = require('./index')
-
+const stocks = require('./commodies')
 const createProductionCard = () => {
     //function to create a new production card and give it to the current player
       //creates 2 empty arrays
@@ -9,20 +9,20 @@ const createProductionCard = () => {
       newCardPrice = []
     
       //priceArray
-      for(let i = 1; i <= 15; i++){priceArray.push('wood')}
-      for(let i = 1; i <= 12; i++){priceArray.push('wheat')}
-      for(let i = 1; i <= 18; i++){priceArray.push('iron')}
-      for(let i = 1; i <= 16; i++){priceArray.push('coal')}
-      for(let i = 1; i <= 21; i++){priceArray.push('goods')}
-      for(let i = 1; i <= 18; i++){priceArray.push('luxury')}
+      for(let i = 1; i <= 15; i++){priceArray.push({name: 'wood', imageLink:'./assets/commodies/wood.png'})}
+      for(let i = 1; i <= 12; i++){priceArray.push({name: 'wheat', imageLink:'./assets/commodies/wheat.png'})}
+      for(let i = 1; i <= 18; i++){priceArray.push({name: 'iron', imageLink:'./assets/commodies/iron.png'})}
+      for(let i = 1; i <= 16; i++){priceArray.push({name: 'coal', imageLink:'./assets/commodies/coal.png'})}
+      for(let i = 1; i <= 21; i++){priceArray.push({name: 'goods', imageLink:'./assets/commodies/goods.png'})}
+      for(let i = 1; i <= 18; i++){priceArray.push({name: 'luxury', imageLink:'./assets/commodies/luxury.png'})}
     
       // productionArray
-      for(let i = 1; i <= 17; i++){productionArray.push('wood')}
-      for(let i = 1; i <= 19; i++){productionArray.push('wheat')}
-      for(let i = 1; i <= 15; i++){productionArray.push('iron')}
-      for(let i = 1; i <= 17; i++){productionArray.push('coal')}
-      for(let i = 1; i <= 15; i++){productionArray.push('goods')}
-      for(let i = 1; i <= 17; i++){productionArray.push('luxury')}
+      for(let i = 1; i <= 17; i++){productionArray.push({name: 'wood', imageLink:'./assets/commodies/wood.png'})}
+      for(let i = 1; i <= 19; i++){productionArray.push({name: 'wheat', imageLink:'./assets/commodies/wheat.png'})}
+      for(let i = 1; i <= 15; i++){productionArray.push({name: 'iron', imageLink:'./assets/commodies/iron.png'})}
+      for(let i = 1; i <= 17; i++){productionArray.push({name: 'coal', imageLink:'./assets/commodies/coal.png'})}
+      for(let i = 1; i <= 15; i++){productionArray.push({name: 'goods', imageLink:'./assets/commodies/goods.png'})}
+      for(let i = 1; i <= 17; i++){productionArray.push({name: 'luxury', imageLink:'./assets/commodies/luxury.png'})}
 
       //creates a new array size 100 with the respective probablilties
       let randomNumber = (3 + Math.floor(Math.random()*3));
@@ -34,26 +34,13 @@ const createProductionCard = () => {
       for(let i = 1; i <= randomNumber; i++){
         newCardPrice.push(priceArray[Math.floor(Math.random()*101)]);
       }
+
     
-    //filters the amount of each in the array to get the value in the back end
-      let newCard = {
-        production: {
-          wheat: newCardProduction.filter((j) => j === 'wheat').length,
-          wood: newCardProduction.filter((j) => j === 'wood').length,
-          iron: newCardProduction.filter((j) => j === 'iron').length,
-          coal: newCardProduction.filter((j) => j === 'coal').length,
-          goods: newCardProduction.filter((j) => j === 'goods').length,
-          luxury: newCardProduction.filter((j) => j === 'luxury').length
-        },
-        price:{
-          wheat: newCardPrice.filter((j) => j === 'wheat').length,
-          wood: newCardPrice.filter((j) => j === 'wood').length,
-          iron: newCardPrice.filter((j) => j === 'iron').length,
-          coal: newCardPrice.filter((j) => j === 'coal').length,
-          goods: newCardPrice.filter((j) => j === 'goods').length,
-          luxury: newCardPrice.filter((j) => j === 'luxury').length
-        }
-      }
+    let newCard = {
+        production:newCardProduction,
+        price:newCardPrice
+    }
+    console.log('newcard price', newCard)
     
     //adds the new card to the curreny player on the front end and back end
 
@@ -141,6 +128,8 @@ const initalizeBoard = (game) => {
         }
     }
 
+    console.log(createProductionCard())
+
     return game
 }
 
@@ -148,7 +137,6 @@ const addPlayer = (game, player) => {
     game.players.push(player)
     return game
 }
-
 
 module.exports = {
     shuffle,

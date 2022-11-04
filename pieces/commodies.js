@@ -25,7 +25,7 @@ class Stock{
     iron,
     coal,
     goods,
-    luxury
+    luxury,
   ]
   
-  module.exports = stocks
+  module.exports = {stocks:stocks,Stock}

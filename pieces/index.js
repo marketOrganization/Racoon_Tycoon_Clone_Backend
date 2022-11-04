@@ -5,7 +5,7 @@ const towns = require('./towns')
 
 module.exports = {
     buildings : buildings,
-    commodies : commodies,
+    commodies : commodies.stocks,
     railroads : railroads,
     towns : towns
 }
