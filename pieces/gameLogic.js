@@ -1,5 +1,6 @@
 const pieces = require('./index')
 const stocks = require('./commodies')
+
 const createProductionCard = () => {
     //function to create a new production card and give it to the current player
       //creates 2 empty arrays
@@ -25,23 +26,21 @@ const createProductionCard = () => {
       for(let i = 1; i <= 17; i++){productionArray.push({name: 'luxury', imageLink:'./assets/commodies/luxury.png'})}
 
       //creates a new array size 100 with the respective probablilties
-      let randomNumber = (3 + Math.floor(Math.random()*3));
+      let randomNumber = (3 + Math.floor(Math.random()*2));
       for(let i = 1; i <= randomNumber; i++){
         newCardProduction.push(productionArray[Math.floor(Math.random()*101)]);
       }
     
-      randomNumber = (2 + Math.floor(Math.random()*4));
+      randomNumber = (2 + Math.floor(Math.random()*3));
       for(let i = 1; i <= randomNumber; i++){
         newCardPrice.push(priceArray[Math.floor(Math.random()*101)]);
       }
 
-    
     let newCard = {
         production:newCardProduction,
         price:newCardPrice
     }
-    console.log('newcard price', newCard)
-    
+
     //adds the new card to the curreny player on the front end and back end
 
     return newCard
@@ -112,14 +111,11 @@ const initalizeBoard = (game) => {
 
     //decks have been created, now divy out the cards
 
-    game.currentPlayersTurn = game.players[Math.floor(Math.random() * game.players.length)]
-
-    game.avaiableRailRoadOne = game.railRoadDeck.splice(0,1)[0]
-    game.avaiableRailRoadTwo = game.railRoadDeck.splice(0,1)[0]
-    game.avaiableBuildingOne = game.buildingDeck.splice(0,1)[0]
-    game.avaiableBuildingTwo = game.buildingDeck.splice(0,1)[0]
-    game.avaiableBuildingThree = game.buildingDeck.splice(0,1)[0]
-    game.avaiableBuildingFour = game.buildingDeck.splice(0,1)[0]
+    game.turnIndex = Math.floor(Math.random() * game.players.length)
+    game.players[game.turnIndex].isInTurn = true
+    
+    game.shownRailRoads = [...game.railRoadDeck.splice(0,2)]
+    game.shownBuildings = [...game.buildingDeck.splice(0,4)]
     game.avaiableTown = game.townDeck.splice(0,1)[0]
 
     for(let i = 0; i < game.players.length; i++){
@@ -127,8 +123,6 @@ const initalizeBoard = (game) => {
             game.players[i].productionCards.push(createProductionCard())
         }
     }
-
-    console.log(createProductionCard())
 
     return game
 }
@@ -138,11 +132,40 @@ const addPlayer = (game, player) => {
     return game
 }
 
+const handleAuctionStart = (game, railRoadIndex) => {
+    game.auctionCardIndex = railRoadIndex
+    game.auctionIndex = game.turnIndex
+    game.players[game.auctionIndex].currBidder = true
+    game.auction = true
+    game.bid = game.shownRailRoads[railRoadIndex].minimumPrice
+    for(let i = 0; i < game.players.length; i++){
+        game.players[i].inBid = true
+        game.players[i].isInAuction = true
+        game.players[i].isInTurn = false
+    }
+    return game
+}
+
+const handleAuctionRound = (game, bid) => {
+    if(bid > game.bid){
+        game.bid = bid
+        for(let i = 0; i < game.players.length; i++){
+            game.players[i].highestBidder = false
+        }
+        game.players[game.auctionIndex].highestBidder = true
+        game.auctionIndex++
+        return game
+    }else{
+        return false
+    }
+} 
 module.exports = {
     shuffle,
     createTownDeck,
     createRailRoadDeck,
     initalizeBoard,
     addPlayer,
-    createProductionCard
+    createProductionCard,
+    handleAuctionStart,
+    handleAuctionRound
 }

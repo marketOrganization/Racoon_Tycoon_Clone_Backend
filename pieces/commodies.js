@@ -6,17 +6,17 @@ class Stock{
     }
   }
 
-  let wheat = new Stock('wheat', ' ./assets/commodies/wheat.png');
+  let wheat = new Stock('wheat', 'wheat.png');
   wheat.value = 1;
-  let wood = new Stock('wood',  ' ./assets/commodies/wood.png');
+  let wood = new Stock('wood',  'wood.png');
   wood.value = 1;
-  let iron = new Stock('iron', ' ./assets/commodies/iron.png');
+  let iron = new Stock('iron', 'iron.png');
   iron.value = 2;
-  let coal = new Stock('coal',  ' ./assets/commodies/coal.png');
+  let coal = new Stock('coal',  'coal.png');
   coal.value = 2;
-  let goods = new Stock('goods', ' ./assets/commodies/goods.png');
+  let goods = new Stock('goods', 'goods.png');
   goods.value = 3;
-  let luxury = new Stock('luxury',  ' ./assets/commodies/luxury.png');
+  let luxury = new Stock('luxury',  'luxury.png');
   luxury.value = 3;
 
   const stocks = [

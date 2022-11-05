@@ -18,6 +18,11 @@ class Player{
       this.commodityMax = 10;
       this.handSize = 3;
       this.productionMax = 3;
+      this.highestBidder = false;
+      this.inBid = false;
+      this.isInTurn = false;
+      this.isInAuction = false;
+      this.currBidder = false;
     }
     produce(index, producing) {
       for(const commodity in producing){
