@@ -73,11 +73,6 @@ Socketio.on("connection", async socket => {
         Socketio.to(data.roomId).emit("updateGame", newData)
     })
 
-    socket.on("startAuction", data => {
-        data.game = logic.handleAuctionStart(data.game, data.railroad)
-        Socketio.to(data.game.roomId).emit("updateGame", data)
-    })
-
     socket.on("auctionRound", data => {
         data.game = logic.handleAuctionRound(data.game, data.newBid)
         if(data.game){
@@ -86,6 +81,24 @@ Socketio.on("connection", async socket => {
         }else{
             Socketio.to(socket.id).emit("emitMessage", "Invalid Bid")
         }
+    })
+
+    socket.on("ACTION", game => {
+        switch(game.action){
+            case "START_AUCTION":
+                game = logic.handleAuctionStart(game, game.payload)
+                break
+            
+            case "AUCTION_ROUND":
+                game = logic.handleAuctionRound(game, game.payload)
+                break
+
+            case "AUCTION_OUT":
+                game = logic.handleAuctionOut(game)
+                break
+        }
+
+        Socketio.to(game.roomId).emit("UPDATE_GAME", game)
     })
 })
 

@@ -108,12 +108,8 @@ const initalizeBoard = (game) => {
     game.buildingDeck = buildingDeckStart.concat(shuffle(buildingDeckEnd))
     game.townDeck = createTownDeck(game.players.length, [...pieces.towns])
     game.commodies = [...pieces.commodies]
-
-    //decks have been created, now divy out the cards
-
     game.turnIndex = Math.floor(Math.random() * game.players.length)
     game.players[game.turnIndex].isInTurn = true
-    
     game.shownRailRoads = [...game.railRoadDeck.splice(0,2)]
     game.shownBuildings = [...game.buildingDeck.splice(0,4)]
     game.avaiableTown = game.townDeck.splice(0,1)[0]
@@ -146,19 +142,85 @@ const handleAuctionStart = (game, railRoadIndex) => {
     return game
 }
 
+const setNextTurn = (game) => {
+    game.players[game.turnIndex].isInTurn = false
+    game.players[game.turnIndex + 1]? game.turnIndex++ : game.turnIndex = 0
+    game.players[game.turnIndex].isInTurn = true
+    const message = `It is now ${game.players[game.turnIndex].name}'s turn.`
+    game.messageFeed.push(message)
+    return game
+} 
+
+const setNextBidder = (game) => {
+    game.players[game.auctionIndex].currBidder = false
+    game.players[game.auctionIndex + 1]? game.auctionIndex++ : game.auctionIndex = 0
+    if(game.players.filter(player=>{return player.inBid}).length === 1){
+        const message = `${game.players[highestBidderIndex].name} won the auciton for ${game.bid}`
+        game.messageFeed.push(message)
+        game.players[game.highestBidderIndex].money -= game.bid
+        game.players[game.highestBidderIndex].railroads.push(...
+        game.shownRailRoads.splice(
+            game.auctionCardIndex,
+            1,
+            ...game.railRoadDeck.splice(
+                0,
+                1
+            )
+        ))
+
+        for(let i = 0; i < game.players.length; i++){
+            game.players[i].highestBidder = false
+            game.players[i].inBid = true;
+            game.players[i].isInAuction = false;
+            game.players[i].currBidder = false;
+        }   
+
+        if(game.highestBidderIndex === game.turnIndex){
+            game = setNextTurn(game)
+        }else{
+            game.players[game.turnIndex].isInTurn = true
+        }
+       game.auctionIndex = null
+       game.auction = null
+       game.bid = 0
+       game.highestBidderIndex = null
+
+        game.message = "Auction Over"
+        return game
+    }else{
+        if(game.players[game.auctionIndex].inBid){
+            game.players[game.auctionIndex].currBidder = true
+        }else{
+            return setNextBidder(game)
+        }
+    }
+
+    return game
+}
+
+
 const handleAuctionRound = (game, bid) => {
     if(bid > game.bid){
         game.bid = bid
         for(let i = 0; i < game.players.length; i++){
             game.players[i].highestBidder = false
+            game.players[i].currBidder = false
         }
+        game.highestBidderIndex = game.auctionIndex
         game.players[game.auctionIndex].highestBidder = true
-        game.auctionIndex++
+        game = setNextBidder(game)
         return game
     }else{
         return false
     }
 } 
+
+const handleAuctionOut = (game) => {
+    game.players[game.auctionIndex].inBid = false
+
+    return setNextBidder(game)
+}
+
 module.exports = {
     shuffle,
     createTownDeck,
@@ -167,5 +229,6 @@ module.exports = {
     addPlayer,
     createProductionCard,
     handleAuctionStart,
-    handleAuctionRound
+    handleAuctionRound,
+    handleAuctionOut
 }
