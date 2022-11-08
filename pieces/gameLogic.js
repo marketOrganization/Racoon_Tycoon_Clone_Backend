@@ -10,20 +10,20 @@ const createProductionCard = () => {
       newCardPrice = []
     
       //priceArray
-      for(let i = 1; i <= 15; i++){priceArray.push({name: 'wood', imageLink:'./assets/commodies/wood.png'})}
-      for(let i = 1; i <= 12; i++){priceArray.push({name: 'wheat', imageLink:'./assets/commodies/wheat.png'})}
-      for(let i = 1; i <= 18; i++){priceArray.push({name: 'iron', imageLink:'./assets/commodies/iron.png'})}
-      for(let i = 1; i <= 16; i++){priceArray.push({name: 'coal', imageLink:'./assets/commodies/coal.png'})}
-      for(let i = 1; i <= 21; i++){priceArray.push({name: 'goods', imageLink:'./assets/commodies/goods.png'})}
-      for(let i = 1; i <= 18; i++){priceArray.push({name: 'luxury', imageLink:'./assets/commodies/luxury.png'})}
+      for(let i = 1; i <= 15; i++){priceArray.push({name: 'wood', imageLink:'wood.png'})}
+      for(let i = 1; i <= 12; i++){priceArray.push({name: 'wheat', imageLink:'wheat.png'})}
+      for(let i = 1; i <= 18; i++){priceArray.push({name: 'iron', imageLink:'iron.png'})}
+      for(let i = 1; i <= 16; i++){priceArray.push({name: 'coal', imageLink:'coal.png'})}
+      for(let i = 1; i <= 21; i++){priceArray.push({name: 'goods', imageLink:'goods.png'})}
+      for(let i = 1; i <= 18; i++){priceArray.push({name: 'luxury', imageLink:'luxury.png'})}
     
       // productionArray
-      for(let i = 1; i <= 17; i++){productionArray.push({name: 'wood', imageLink:'./assets/commodies/wood.png'})}
-      for(let i = 1; i <= 19; i++){productionArray.push({name: 'wheat', imageLink:'./assets/commodies/wheat.png'})}
-      for(let i = 1; i <= 15; i++){productionArray.push({name: 'iron', imageLink:'./assets/commodies/iron.png'})}
-      for(let i = 1; i <= 17; i++){productionArray.push({name: 'coal', imageLink:'./assets/commodies/coal.png'})}
-      for(let i = 1; i <= 15; i++){productionArray.push({name: 'goods', imageLink:'./assets/commodies/goods.png'})}
-      for(let i = 1; i <= 17; i++){productionArray.push({name: 'luxury', imageLink:'./assets/commodies/luxury.png'})}
+      for(let i = 1; i <= 17; i++){productionArray.push({name: 'wood', imageLink:'wood.png'})}
+      for(let i = 1; i <= 19; i++){productionArray.push({name: 'wheat', imageLink:'wheat.png'})}
+      for(let i = 1; i <= 15; i++){productionArray.push({name: 'iron', imageLink:'iron.png'})}
+      for(let i = 1; i <= 17; i++){productionArray.push({name: 'coal', imageLink:'coal.png'})}
+      for(let i = 1; i <= 15; i++){productionArray.push({name: 'goods', imageLink:'goods.png'})}
+      for(let i = 1; i <= 17; i++){productionArray.push({name: 'luxury', imageLink:'luxury.png'})}
 
       //creates a new array size 100 with the respective probablilties
       let randomNumber = (3 + Math.floor(Math.random()*2));
@@ -119,12 +119,16 @@ const initalizeBoard = (game) => {
             game.players[i].productionCards.push(createProductionCard())
         }
     }
-
+    game.messageFeed.push(`Game Started!`)
+    const message = `It is now ${game.players[game.turnIndex].name}'s turn.`
+    game.messageFeed.push(message)
     return game
 }
 
 const addPlayer = (game, player) => {
     game.players.push(player)
+    game.messageFeed.push(`${player.name} joined.`)
+
     return game
 }
 
@@ -133,7 +137,7 @@ const handleAuctionStart = (game, railRoadIndex) => {
     game.auctionIndex = game.turnIndex
     game.players[game.auctionIndex].currBidder = true
     game.auction = true
-    game.bid = game.shownRailRoads[railRoadIndex].minimumPrice
+    game.bid = game.shownRailRoads[railRoadIndex].minimumPrice - 1
     for(let i = 0; i < game.players.length; i++){
         game.players[i].inBid = true
         game.players[i].isInAuction = true
@@ -155,7 +159,7 @@ const setNextBidder = (game) => {
     game.players[game.auctionIndex].currBidder = false
     game.players[game.auctionIndex + 1]? game.auctionIndex++ : game.auctionIndex = 0
     if(game.players.filter(player=>{return player.inBid}).length === 1){
-        const message = `${game.players[highestBidderIndex].name} won the auciton for ${game.bid}`
+        const message = `${game.players[game.highestBidderIndex].name} won the auction for ${game.bid}`
         game.messageFeed.push(message)
         game.players[game.highestBidderIndex].money -= game.bid
         game.players[game.highestBidderIndex].railroads.push(...
@@ -167,37 +171,36 @@ const setNextBidder = (game) => {
                 1
             )
         ))
-
         for(let i = 0; i < game.players.length; i++){
             game.players[i].highestBidder = false
             game.players[i].inBid = true;
             game.players[i].isInAuction = false;
             game.players[i].currBidder = false;
         }   
-
         if(game.highestBidderIndex === game.turnIndex){
             game = setNextTurn(game)
         }else{
+            const message = `It is ${game.players[game.turnIndex].name}'s turn.`
+            game.messageFeed.push(message)
             game.players[game.turnIndex].isInTurn = true
         }
-       game.auctionIndex = null
-       game.auction = null
-       game.bid = 0
-       game.highestBidderIndex = null
-
+        game.auctionIndex = null
+        game.auction = null
+        game.bid = 0
+        game.highestBidderIndex = null
         game.message = "Auction Over"
         return game
     }else{
         if(game.players[game.auctionIndex].inBid){
+            const message = `It is now ${game.players[game.auctionIndex].name}'s bid.`
+            game.messageFeed.push(message)
             game.players[game.auctionIndex].currBidder = true
         }else{
             return setNextBidder(game)
         }
     }
-
     return game
 }
-
 
 const handleAuctionRound = (game, bid) => {
     if(bid > game.bid){
@@ -215,10 +218,72 @@ const handleAuctionRound = (game, bid) => {
     }
 } 
 
+const handleProduce = (game) => {
+    let player = game.players[game.turnIndex]
+    
+    //increase prices
+    for(let i = 0; i < player.productionCards[player.producingIndex].price.length; i++){
+        game.commodityValues[player.productionCards[player.producingIndex].price[i].name]++
+    }
+    
+    //give player commodies
+    for(let i = 0; i < player.producingArray.length; i++){
+        player.commodies.push(player.producingArray[i])
+    }
+
+    //remove production card from player and give player new production card
+    player.productionCards.splice(player.producingIndex, 1 , createProductionCard())
+
+    player.producingIndex = null
+    player.pickingProduceItems = false
+    player.producingArray = []
+    game.players[game.turnIndex] = player
+
+    if(player.commodies.length > player.commodityMax){
+        game.action = "DISCARD"
+        game.messageFeed.push(`${player.name} must discard ${player.commodies.length - player.commodityMax} commodies.`)
+        return game
+    }else{
+        game.messageFeed.push(`${player.name} produced.`)
+        return setNextTurn(game)
+    }
+        
+}
+
 const handleAuctionOut = (game) => {
     game.players[game.auctionIndex].inBid = false
-
     return setNextBidder(game)
+}
+
+const handleSellCommodity = (game, sellingCommodity, amount) => {
+    let player = game.players[game.turnIndex]
+    
+    //remove that many of that type of commodity from the current player
+    for(let i = 0; i < amount; i++){
+        console.log("aspects of the indexOf to find the comodity", player.commodies, sellingCommodity )
+        console.log("index of the commodity bein fremoved from the players commodies array:", player.commodies.findIndex((commodity) => {return commodity.name === sellingCommodity}))
+        player.commodies.splice(player.commodies.findIndex((commodity) => {return commodity.name === sellingCommodity}), 1)
+    }
+
+    //increase that players money
+    player.money += parseInt(game.commodityValues[sellingCommodity]) * amount
+
+    //decrese the price of that commodity accordingly
+    game.commodityValues[sellingCommodity] -= amount
+
+    if(game.commodityValues[sellingCommodity] < 1){
+        game.commodityValues[sellingCommodity] = 1
+    }
+
+    game.messageFeed.push(`${player.name} sold ${amount} ${sellingCommodity} for $${parseInt(game.commodityValues[sellingCommodity]) * amount}`)
+    player.selling = false
+    player.soldAmount = 0
+    game.players[game.turnIndex] = player
+    game.sellAmount = 0;
+    game.sellingCommodity = null
+    game = setNextTurn(game)
+    return game
+
 }
 
 module.exports = {
@@ -230,5 +295,9 @@ module.exports = {
     createProductionCard,
     handleAuctionStart,
     handleAuctionRound,
-    handleAuctionOut
+    handleAuctionOut,
+    handleProduce,
+    setNextBidder,
+    setNextTurn,
+    handleSellCommodity
 }

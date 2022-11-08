@@ -12,8 +12,8 @@ const Socketio = require("socket.io")(Http, {
 })
 
 Socketio.on("connection", async socket => {
-    socket.on("startGame", data => {
 
+    socket.on("startGame", data => {
         let room = null
         let peopleInRoom = 0
         let peopleInGame = 0
@@ -46,6 +46,10 @@ Socketio.on("connection", async socket => {
         }else{
             Socketio.to(socket.id).emit("invalidRoom", data)
         }
+    })
+
+    socket.on("sendMessage", data => {
+        socket.to(data.recievrID).emit()
     })
 
     socket.on("joinRoom", data => {
@@ -95,6 +99,18 @@ Socketio.on("connection", async socket => {
 
             case "AUCTION_OUT":
                 game = logic.handleAuctionOut(game)
+                break
+            
+            case "PRODUCE":
+                game = logic.handleProduce(game)
+                break
+            
+            case "NEXT_TURN":
+                game = logic.setNextTurn(game)
+                break
+            
+            case "SELL":
+                game = logic.handleSellCommodity(game, game.sellingCommodity, game.sellAmount)
                 break
         }
 

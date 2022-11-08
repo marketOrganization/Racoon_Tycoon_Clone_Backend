@@ -2,7 +2,7 @@ class Game {
     constructor(roomId){
         this.roomId = roomId
         this.action = null
-        this.actionFeed = []
+        this.messageFeed = []
         this.players = []
         this.railRoadDeck = []
         this.buildingDeck = []
@@ -16,10 +16,10 @@ class Game {
             wood : 1,
             coal : 2,
             iron : 2,
-            good : 3,
+            goods : 3,
             luxury : 3,
         },
-
+        
         //auctionAttributes
         this.auctionCardIndex = null
         this.turnIndex = null
@@ -27,6 +27,10 @@ class Game {
         this.auction = null
         this.bid = 0
         this.highestBidderIndex = null
+
+        //selling attributes
+        this.sellingCommodity = null
+        this.sellAmount = 0
     }
 }
     
