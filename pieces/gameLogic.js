@@ -28,12 +28,14 @@ const createProductionCard = () => {
       //creates a new array size 100 with the respective probablilties
       let randomNumber = (3 + Math.floor(Math.random()*2));
       for(let i = 1; i <= randomNumber; i++){
-        newCardProduction.push(productionArray[Math.floor(Math.random()*101)]);
+        console.log(productionArray[Math.floor(Math.random()*100)])
+        newCardProduction.push(productionArray[Math.floor(Math.random()*100)]);
       }
     
       randomNumber = (2 + Math.floor(Math.random()*3));
       for(let i = 1; i <= randomNumber; i++){
-        newCardPrice.push(priceArray[Math.floor(Math.random()*101)]);
+        console.log(priceArray[Math.floor(Math.random()*100)])
+        newCardPrice.push(priceArray[Math.floor(Math.random()*100)]);
       }
 
     let newCard = {
@@ -41,10 +43,8 @@ const createProductionCard = () => {
         price:newCardPrice
     }
 
-    //adds the new card to the curreny player on the front end and back end
-
+    console.log(newCard)
     return newCard
-    
 }
 
 const shuffle = (array) => {
@@ -260,8 +260,6 @@ const handleSellCommodity = (game, sellingCommodity, amount) => {
     
     //remove that many of that type of commodity from the current player
     for(let i = 0; i < amount; i++){
-        console.log("aspects of the indexOf to find the comodity", player.commodies, sellingCommodity )
-        console.log("index of the commodity bein fremoved from the players commodies array:", player.commodies.findIndex((commodity) => {return commodity.name === sellingCommodity}))
         player.commodies.splice(player.commodies.findIndex((commodity) => {return commodity.name === sellingCommodity}), 1)
     }
 
