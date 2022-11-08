@@ -27,6 +27,12 @@ class Player{
 
       //selling attributes
       this.selling = false
+
+      //buying town attributes
+      this.pickingTownCommodies = false
+
+      //buying buildings attributes
+      this.buyingBuilding = false
     }
   }
   module.exports = Player

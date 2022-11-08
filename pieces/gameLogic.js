@@ -218,6 +218,26 @@ const handleAuctionRound = (game, bid) => {
     }
 } 
 
+const checkCommodityValues = (game) =>{
+    //check if too high
+    if(game.commodityValues.wheat > 11){game.commodityValues.wheat = 11}
+    if(game.commodityValues.wood > 11){game.commodityValues.wood = 11}
+    if(game.commodityValues.iron > 12){game.commodityValues.iron = 12}
+    if(game.commodityValues.coal > 12){game.commodityValues.coal = 12}
+    if(game.commodityValues.goods > 13){game.commodityValues.goods = 13}
+    if(game.commodityValues.luxury > 13){game.commodityValues.luxury = 13}
+
+    //check if to low
+    if(game.commodityValues.wheat < 1){game.commodityValues.wheat = 1}
+    if(game.commodityValues.wood < 1){game.commodityValues.wood = 1}
+    if(game.commodityValues.iron < 2){game.commodityValues.iron = 2}
+    if(game.commodityValues.coal < 2){game.commodityValues.coal = 2}
+    if(game.commodityValues.goods < 3){game.commodityValues.goods = 3}
+    if(game.commodityValues.luxury < 3){game.commodityValues.luxury = 3}
+
+    return game
+}
+
 const handleProduce = (game) => {
     let player = game.players[game.turnIndex]
     
@@ -225,6 +245,7 @@ const handleProduce = (game) => {
     for(let i = 0; i < player.productionCards[player.producingIndex].price.length; i++){
         game.commodityValues[player.productionCards[player.producingIndex].price[i].name]++
     }
+
     
     //give player commodies
     for(let i = 0; i < player.producingArray.length; i++){
@@ -234,6 +255,7 @@ const handleProduce = (game) => {
     //remove production card from player and give player new production card
     player.productionCards.splice(player.producingIndex, 1 , createProductionCard())
 
+    game = checkCommodityValues(game)
     player.producingIndex = null
     player.pickingProduceItems = false
     player.producingArray = []
@@ -265,15 +287,12 @@ const handleSellCommodity = (game, sellingCommodity, amount) => {
 
     //increase that players money
     player.money += parseInt(game.commodityValues[sellingCommodity]) * amount
+    game.messageFeed.push(`${player.name} sold ${amount} ${sellingCommodity} for $${parseInt(game.commodityValues[sellingCommodity]) * amount}`)
 
     //decrese the price of that commodity accordingly
     game.commodityValues[sellingCommodity] -= amount
 
-    if(game.commodityValues[sellingCommodity] < 1){
-        game.commodityValues[sellingCommodity] = 1
-    }
-
-    game.messageFeed.push(`${player.name} sold ${amount} ${sellingCommodity} for $${parseInt(game.commodityValues[sellingCommodity]) * amount}`)
+    game = checkCommodityValues(game)
     player.selling = false
     player.soldAmount = 0
     game.players[game.turnIndex] = player
@@ -282,6 +301,45 @@ const handleSellCommodity = (game, sellingCommodity, amount) => {
     game = setNextTurn(game)
     return game
 
+}
+
+const handleBuyTown = (game) =>{
+    let player = game.players[game.turnIndex]
+
+    if(game.action === "BUY_TOWN_ANY"){
+        game.townBuyingArray = []
+        game.messageFeed.push(`${player.name} Purchased a using any ${game.avaiableTown.anyPrice}`)
+    }else if(game.action === "BUY_TOWN_SPECIFIC"){
+        for(let i = 0; i < game.avaiableTown.specificPrice; i++){
+            player.commodies.splice(player.commodies.findIndex((commodity) => {return commodity.name === game.avaiableTown.specificType}), 1)
+        }
+        game.messageFeed.push(`${player.name} Purchased a town for ${game.avaiableTown.specificPrice} ${game.avaiableTown.specificType}`)
+    }   
+
+    player.pickingTownCommodies = false
+    player.towns.push(game.avaiableTown)
+    game.avaiableTown = game.townDeck.splice(0,1)[0]
+    game.players[game.turnIndex] = player
+
+    return setNextTurn(game)
+}
+
+const handleBuyBuilding = (game) => {
+    
+    player = game.players[game.turnIndex]
+    
+    //make the player pay for the building
+    player.money -= game.shownBuildings[game.buildingBuyIndex].price
+    game.messageFeed.push(`${player.name} Purchased ${game.shownBuildings[game.buildingBuyIndex].name} for $${game.shownBuildings[game.buildingBuyIndex].price}`)
+    
+    //give the building to the player and refill the sold building slot
+    player.buildings.push(...game.shownBuildings.splice(game.buildingBuyIndex, 1, ...game.buildingDeck.splice(0,1)))
+
+    //set player.buyingBuilding back to false and game.buldingBuyIndex = null
+    player.buyingBuilding = false
+    game.buldingBuyIndex = null
+    game.players[game.turnIndex] = player
+    return setNextTurn(game)
 }
 
 module.exports = {
@@ -297,5 +355,7 @@ module.exports = {
     handleProduce,
     setNextBidder,
     setNextTurn,
-    handleSellCommodity
+    handleSellCommodity,
+    handleBuyTown,
+    handleBuyBuilding
 }

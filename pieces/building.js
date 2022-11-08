@@ -19,21 +19,22 @@ class Building {
       this.playerChanger = playerChanger;
       this.imageLink = imageLink;
       this.upgradedImageLink = upgradedImageLink;
+      this.upgraded = false;
     }
     action() {
       //methods for the action eahc will if they have one
     }
   }
  const buildings = [
-    new Building("iron1",5,1,12,false,true,false,"iron.jpg","doubleIron.jpg") ,
-    new Building("luxury1",6,1,15,false,true,false,"luxury.jpg","doubleLuxury.jpg") ,
-    new Building("wood1",4,1,9,false,true,false,"wood.jpg","doubleWood.jpg") ,
-    new Building("wheat1",4,1,9,false,true,false,"wheat.jpg","doubleWheat.jpg") ,
-    new Building("coal1",5,1,12,false,true,false,"coal.jpg","doubleCoal.jpg") ,
-    new Building("goods1",6,1,15,false,true,false,"goods.jpg","doubleGoods.jpg") ,
-    new Building("coal&iron",10,1,false,false,true,false,"coal&iron.jpg",false) ,
-    new Building("goods&luxury",10,1,false,false,true,false,"good&luxury.jpg",false) ,
-    new Building("wheat&wood",10,1,false,false,true,false,"wood&wheat.jpg",false) ,
+    new Building("Iron Deposit",5,1,12,false,true,false,"iron.jpg","doubleIron.jpg") ,
+    new Building("Vineyard",6,1,15,false,true,false,"luxury.jpg","doubleLuxury.jpg") ,
+    new Building("Lumbar Yard",4,1,9,false,true,false,"wood.jpg","doubleWood.jpg") ,
+    new Building("Wheat Field",4,1,9,false,true,false,"wheat.jpg","doubleWheat.jpg") ,
+    new Building("Caol Deposit",5,1,12,false,true,false,"coal.jpg","doubleCoal.jpg") ,
+    new Building("Tool & Die",6,1,15,false,true,false,"goods.jpg","doubleGoods.jpg") ,
+    new Building("Coal / Iron Trading Firm",10,1,false,false,true,false,"coal&iron.jpg",false) ,
+    new Building("Goods / Luxury Trading Firm",10,1,false,false,true,false,"good&luxury.jpg",false) ,
+    new Building("Wheat / Wood Trading Firm",10,1,false,false,true,false,"wood&wheat.jpg",false) ,
     new Building("Cottage Industry",30,1,false,false,false,true,"cottageIndustry.jpg",false) ,
     new Building("Warehouse",10,2,false,false,false,true,"warehouse.jpg",false) ,
     new Building("Factory",40,2,false,false,false,true,"factory.jpg",false) ,

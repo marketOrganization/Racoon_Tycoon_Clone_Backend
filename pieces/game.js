@@ -31,6 +31,10 @@ class Game {
         //selling attributes
         this.sellingCommodity = null
         this.sellAmount = 0
+
+        //buying attributes
+        this.townBuyingArray = []
+        this.buildingBuyIndex = null
     }
 }
     

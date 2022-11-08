@@ -112,6 +112,15 @@ Socketio.on("connection", async socket => {
             case "SELL":
                 game = logic.handleSellCommodity(game, game.sellingCommodity, game.sellAmount)
                 break
+
+            case "BUY_TOWN_ANY":
+            case "BUY_TOWN_SPECIFIC":
+                game = logic.handleBuyTown(game)
+                break
+            
+            case "BUY_BUILDING":
+                game = logic.handleBuyBuilding(game)
+
         }
 
         Socketio.to(game.roomId).emit("UPDATE_GAME", game)
