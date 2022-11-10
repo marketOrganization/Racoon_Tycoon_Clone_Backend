@@ -122,7 +122,6 @@ Socketio.on("connection", async socket => {
                 game = logic.handleBuyBuilding(game)
 
         }
-
         Socketio.to(game.roomId).emit("UPDATE_GAME", game)
     })
 })
