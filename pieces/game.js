@@ -35,6 +35,12 @@ class Game {
         //buying attributes
         this.townBuyingArray = []
         this.buildingBuyIndex = null
+
+        //animations
+        this.board = {
+            action : null,
+            payload: null
+        }
     }
 }
     
