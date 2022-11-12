@@ -123,6 +123,7 @@ Socketio.on("connection", async socket => {
 
         }
         Socketio.to(game.roomId).emit("UPDATE_GAME", game)
+        //add animation type to the thng
     })
 })
 
