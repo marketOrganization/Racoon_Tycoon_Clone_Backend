@@ -240,13 +240,23 @@ const checkCommodityValues = (game) =>{
 
 const handleProduce = (game) => {
     let player = game.players[game.turnIndex]
-    
+
+    game.animation.action = "MOVE_COMMODITY"
+    let animationPayload = {}
+
     //increase prices
     for(let i = 0; i < player.productionCards[player.producingIndex].price.length; i++){
         game.commodityValues[player.productionCards[player.producingIndex].price[i].name]++
+
+        if(payload[player.productionCards[player.producingIndex].price[i].name]){
+            payload[player.productionCards[player.producingIndex].price[i].name]++
+        }else{
+            payload[player.productionCards[player.producingIndex].price[i].name] = 1
+        }
+
+        //setting up a system to create an object that contains a commodity name and the value to increase it
     }
 
-    
     //give player commodies
     for(let i = 0; i < player.producingArray.length; i++){
         player.commodies.push(player.producingArray[i])

@@ -37,8 +37,8 @@ class Game {
         this.buildingBuyIndex = null
 
         //animations
-        this.board = {
-            action : null,
+        this.animation = {
+            action: null,
             payload: null
         }
     }
