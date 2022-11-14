@@ -30,6 +30,7 @@ class Player{
 
       //buying town attributes
       this.pickingTownCommodies = false
+      this.townBonus = 0;
 
       //buying buildings attributes
       this.buyingBuilding = false

@@ -30,7 +30,7 @@ class Building {
     new Building("Vineyard",6,1,15,false,true,false,"luxury.jpg","doubleLuxury.jpg") ,
     new Building("Lumbar Yard",4,1,9,false,true,false,"wood.jpg","doubleWood.jpg") ,
     new Building("Wheat Field",4,1,9,false,true,false,"wheat.jpg","doubleWheat.jpg") ,
-    new Building("Caol Deposit",5,1,12,false,true,false,"coal.jpg","doubleCoal.jpg") ,
+    new Building("Coal Deposit",5,1,12,false,true,false,"coal.jpg","doubleCoal.jpg") ,
     new Building("Tool & Die",6,1,15,false,true,false,"goods.jpg","doubleGoods.jpg") ,
     new Building("Coal / Iron Trading Firm",10,1,false,false,true,false,"coal&iron.jpg",false) ,
     new Building("Goods / Luxury Trading Firm",10,1,false,false,true,false,"good&luxury.jpg",false) ,
@@ -46,9 +46,7 @@ class Building {
     new Building("Govenors Mansion",30,1,false,true,false,false,"govenorsMansion.jpg",false) ,
     new Building("Export Company",30,1,false,false,true,false,"exportCompany.jpg",false) ,
     new Building("Brick Works",25,1,false,false,true,false,"brickWorks.jpg",false) ,
-    new Building("Construction Company",20,1,false,false,true,false,"constructionCompany.jpg",false) ,
     new Building("Auction House",15,1,false,false,true,false,"auctionHouse.jpg",false) ,
-    new Building("Freight Company",25,1,false,false,true,false,"freightCompany.jpg",false) ,
     new Building("Factory",40,2,false,false,false,true,"factory.jpg",false) ,
     new Building("Warehouse",10,2,false,false,false,true,"warehouse.jpg",false) 
  ]

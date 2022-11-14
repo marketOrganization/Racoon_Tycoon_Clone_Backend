@@ -120,7 +120,6 @@ Socketio.on("connection", async socket => {
             
             case "BUY_BUILDING":
                 game = logic.handleBuyBuilding(game)
-
         }
         Socketio.to(game.roomId).emit("UPDATE_GAME", game)
     })
