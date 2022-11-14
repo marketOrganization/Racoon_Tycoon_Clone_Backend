@@ -28,13 +28,11 @@ const createProductionCard = () => {
       //creates a new array size 100 with the respective probablilties
       let randomNumber = (3 + Math.floor(Math.random()*2));
       for(let i = 1; i <= randomNumber; i++){
-        console.log(productionArray[Math.floor(Math.random()*100)])
         newCardProduction.push(productionArray[Math.floor(Math.random()*100)]);
       }
     
       randomNumber = (2 + Math.floor(Math.random()*3));
       for(let i = 1; i <= randomNumber; i++){
-        console.log(priceArray[Math.floor(Math.random()*100)])
         newCardPrice.push(priceArray[Math.floor(Math.random()*100)]);
       }
 
@@ -43,7 +41,6 @@ const createProductionCard = () => {
         price:newCardPrice
     }
 
-    console.log(newCard)
     return newCard
 }
 
@@ -89,7 +86,6 @@ const createRailRoadDeck = (numPlayers, railRoadDeck) => {
     }
     return shuffle(railroads.flat(2))
 }
-
 const initalizeBoard = (game) => {
     let buildingDeckStartUnshuffled = []
     let buildingDeckStart = []
@@ -162,6 +158,8 @@ const setNextBidder = (game) => {
         const message = `${game.players[game.highestBidderIndex].name} won the auction for ${game.bid}`
         game.messageFeed.push(message)
         game.players[game.highestBidderIndex].money -= game.bid
+        game.animation.action = `SHOW_RAILROAD`
+        game.animation.payload = game.auctionCardIndex
         game.players[game.highestBidderIndex].railroads.push(...
         game.shownRailRoads.splice(
             game.auctionCardIndex,
@@ -188,7 +186,7 @@ const setNextBidder = (game) => {
         game.auction = null
         game.bid = 0
         game.highestBidderIndex = null
-        game.message = "Auction Over"
+        game.message = null
         return game
     }else{
         if(game.players[game.auctionIndex].inBid){
@@ -218,7 +216,7 @@ const handleAuctionRound = (game, bid) => {
     }
 } 
 
-const checkCommodityValues = (game) =>{
+const checkCommodityValues = (game, payload) =>{
     //check if too high
     if(game.commodityValues.wheat > 11){game.commodityValues.wheat = 11}
     if(game.commodityValues.wood > 11){game.commodityValues.wood = 11}
@@ -237,26 +235,55 @@ const checkCommodityValues = (game) =>{
 
     return game
 }
+const checkCommodityValueAnimation = (commodity, value, direction) =>{
+    console.log(commodity, value, direction)
+    switch(commodity){
+        case "wheat":
+        case "wood":
+            if(value === 12 && direction || value === 1 && !direction){
+                console.log("here")
+                return false
+            }
+        break
+        
+        case "iron":
+        case "coal":
+            if(value === 13 && direction || value === 2 && !direction){
+                console.log("here")
+                return false
+            }
+        break
+
+        case "goods":
+        case "luxury":
+            if(value === 14 && direction || value === 3 && !direction){
+                console.log("here")
+                return false
+            }
+        break
+    }
+    return true
+}
 
 const handleProduce = (game) => {
     let player = game.players[game.turnIndex]
 
-    game.animation.action = "MOVE_COMMODITY"
+    game.animation.action = "MOVE_COMMODIES"
     let animationPayload = {}
 
     //increase prices
     for(let i = 0; i < player.productionCards[player.producingIndex].price.length; i++){
-        game.commodityValues[player.productionCards[player.producingIndex].price[i].name]++
-
-        if(payload[player.productionCards[player.producingIndex].price[i].name]){
-            payload[player.productionCards[player.producingIndex].price[i].name]++
-        }else{
-            payload[player.productionCards[player.producingIndex].price[i].name] = 1
+        if(checkCommodityValueAnimation(player.productionCards[player.producingIndex].price[i].name, game.commodityValues[player.productionCards[player.producingIndex].price[i].name], true)){
+            game.commodityValues[player.productionCards[player.producingIndex].price[i].name]++
+            if(animationPayload[player.productionCards[player.producingIndex].price[i].name]){
+                animationPayload[player.productionCards[player.producingIndex].price[i].name]++
+            }else{
+                animationPayload[player.productionCards[player.producingIndex].price[i].name] = 1
+            }
         }
-
-        //setting up a system to create an object that contains a commodity name and the value to increase it
     }
-
+    console.log(animationPayload)
+    game.animation.payload = animationPayload
     //give player commodies
     for(let i = 0; i < player.producingArray.length; i++){
         player.commodies.push(player.producingArray[i])
@@ -265,7 +292,7 @@ const handleProduce = (game) => {
     //remove production card from player and give player new production card
     player.productionCards.splice(player.producingIndex, 1 , createProductionCard())
 
-    game = checkCommodityValues(game)
+    //game = checkCommodityValues(game)
     player.producingIndex = null
     player.pickingProduceItems = false
     player.producingArray = []
@@ -289,7 +316,7 @@ const handleAuctionOut = (game) => {
 
 const handleSellCommodity = (game, sellingCommodity, amount) => {
     let player = game.players[game.turnIndex]
-    
+    game.animation.action = "MOVE_COMMODIES"
     //remove that many of that type of commodity from the current player
     for(let i = 0; i < amount; i++){
         player.commodies.splice(player.commodies.findIndex((commodity) => {return commodity.name === sellingCommodity}), 1)
@@ -299,8 +326,16 @@ const handleSellCommodity = (game, sellingCommodity, amount) => {
     player.money += parseInt(game.commodityValues[sellingCommodity]) * amount
     game.messageFeed.push(`${player.name} sold ${amount} ${sellingCommodity} for $${parseInt(game.commodityValues[sellingCommodity]) * amount}`)
 
-    //decrese the price of that commodity accordingly
-    game.commodityValues[sellingCommodity] -= amount
+    for( let i = 0; i < amount; i++){
+        if(checkCommodityValueAnimation(sellingCommodity, game.commodityValues[sellingCommodity], false)){
+            game.commodityValues[sellingCommodity] -= 1
+            if(game.animation.payload[sellingCommodity]){
+                game.animation.payload[sellingCommodity] -= 1
+            }else{
+                game.animation.payload[sellingCommodity] = -1
+            }
+        }
+    }
 
     game = checkCommodityValues(game)
     player.selling = false
@@ -314,6 +349,7 @@ const handleSellCommodity = (game, sellingCommodity, amount) => {
 }
 
 const handleBuyTown = (game) =>{
+    game.animation.action = `SHOW_TOWN`
     let player = game.players[game.turnIndex]
 
     if(game.action === "BUY_TOWN_ANY"){
@@ -335,7 +371,8 @@ const handleBuyTown = (game) =>{
 }
 
 const handleBuyBuilding = (game) => {
-    
+    game.animation.action = `SHOW_BUILDING`
+    game.animation.payload = game.buildingBuyIndex
     player = game.players[game.turnIndex]
     
     //make the player pay for the building
