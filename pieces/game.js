@@ -11,6 +11,7 @@ class Game {
         this.shownRailRoads = []
         this.shownBuildings = []
         this.avaiableTown = {}
+        this.gameOver = false
         this.commodityValues = {
             wheat : 1,
             wood : 1,

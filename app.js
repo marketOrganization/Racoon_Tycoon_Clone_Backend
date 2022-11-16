@@ -34,9 +34,6 @@ Socketio.on("connection", async socket => {
             Socketio.to(data.roomId).emit("invalidRoom", data)
         }
     })
-    
-    //TEST FUNCTION FOR AN @CLICK ON A MESH 
-    socket.on("moveStart", data => {console.log(data)})
 
     socket.on("createRoom", data => {
         if(!Socketio.sockets.adapter.rooms.get(data.roomId)){

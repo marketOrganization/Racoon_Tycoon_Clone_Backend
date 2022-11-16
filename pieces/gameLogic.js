@@ -91,9 +91,10 @@ const initalizeBoard = (game) => {
     let buildingDeckStartUnshuffled = []
     let buildingDeckStart = []
     let buildingDeckEnd = []
-    for(let i = 0; i < 5; i++){
+    for(let i = 0; i < 6; i++){
         buildingDeckStartUnshuffled.push(pieces.buildings[i])
     }
+    console.log(buildingDeckStartUnshuffled)
     let buildingDeckStartShuffled = shuffle([...buildingDeckStartUnshuffled])
     for(let i = 0; i < game.players.length; i++){
         buildingDeckStart.push(buildingDeckStartShuffled[i])
@@ -153,8 +154,9 @@ const setNextTurn = (game) => {
     game.players[game.turnIndex].isInTurn = false
     game.players[game.turnIndex + 1]? game.turnIndex++ : game.turnIndex = 0
     game.players[game.turnIndex].isInTurn = true
-    if(game.turnIndex === game.firstPlayer && game.railRoadDeck.length === 0 || game.townDeck.length === 0){
-        game.winnersArray = findWinner(game)
+    if(game.turnIndex === game.firstPlayer && game.shownRailRoads.length === 0 || game.avaiableTown === null){
+        game = findWinner(game)
+        game.gameOver = true
         game.action = "GAME_OVER"
         const message = `Game Over!`
         game.messageFeed.push(message)
@@ -442,8 +444,9 @@ const handleBuyTown = (game) =>{
 
     player.pickingTownCommodies = false
     player.towns.push(game.avaiableTown)
-    game.avaiableTown = game.townDeck.splice(0,1)[0]
+    game.avaiableTown = game.townDeck[0]? game.townDeck.splice(0,1)[0]: null
     game.players[game.turnIndex] = player
+
 
     return setNextTurn(game)
 }
@@ -503,13 +506,15 @@ const countPoints = (player) => {
     for( let i = 0; i < player.towns; i++){
         score += town.specificPrice
     }
-    
-    let numSkunk = player.railroads.filter((railroad)=>{return railroad.name === "Skunk Works"})
-    let numFox = player.railroads.filter((railroad)=>{return railroad.name === "Sly Fox"})
-    let numCat = player.railroads.filter((railroad)=>{return railroad.name === "Fat Cat"})
-    let numDog= player.railroads.filter((railroad)=>{return railroad.name === "Big Bear"})
-    let numBear = player.railroads.filter((railroad)=>{return railroad.name === "Top Dog"})
-    let numTycoon = player.railroads.filter((railroad)=>{return railroad.name === "Tycoon"})
+    console.log(player)
+    let numSkunk = player.railroads.filter((railroad)=>{return railroad.name === "Skunk Works"}).length
+    let numFox = player.railroads.filter((railroad)=>{return railroad.name === "Sly Fox"}).length
+    let numCat = player.railroads.filter((railroad)=>{return railroad.name === "Fat Cat"}).length
+    let numDog= player.railroads.filter((railroad)=>{return railroad.name === "Big Bear"}).length
+    let numBear = player.railroads.filter((railroad)=>{return railroad.name === "Top Dog"}).length
+    let numTycoon = player.railroads.filter((railroad)=>{return railroad.name === "Tycoon"}).length
+
+    console.log(score)
     switch(numSkunk){
         case 1:
             score += 2
@@ -576,10 +581,18 @@ const countPoints = (player) => {
             score += 25
         default: break
     }
+    console.log(score)
+
 
     score += player.towns.length > player.railroads.length ? player.railroads.length * 2 :  player.towns.length * 2
 
+    console.log(score)
+
+
     score += player.buildings.length
+
+    console.log(score)
+
 
     if(player.buildings.filter(building => {return building.name === "Govenors Mansion"}).length === 1){
         score += player.towns.length
@@ -594,6 +607,9 @@ const countPoints = (player) => {
         score += player.buildings.length
     }
 
+    console.log(score)
+
+
     return score
 
 }
@@ -605,7 +621,9 @@ const findWinner = (game) => {
         playerArray.push(game.players[i])
     }
 
-    return playerArray.sort((a,b) => a.score - b.score)
+    game.players = playerArray.sort((a,b) => a.score - b.score)
+
+    return game
 }
 
 module.exports = {
