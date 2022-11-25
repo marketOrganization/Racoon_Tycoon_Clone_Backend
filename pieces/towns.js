@@ -7,9 +7,6 @@ class Town {
       this.inDeck = true;
       this.commodityImageLink = commodityImageLink;
     }
-    removeFromDeck() {
-      this.inDeck = false;
-    }
   }
 
 const towns = [

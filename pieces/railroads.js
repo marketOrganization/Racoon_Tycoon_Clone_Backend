@@ -5,9 +5,6 @@ class RailRoad {
       this.imageLink = imageLink;
       this.remainingInDeck = 4;
     }
-    removeOneFromDeck() {
-      this.remainingInDeck -= 1;
-    }
   }
 
   const railroads = [

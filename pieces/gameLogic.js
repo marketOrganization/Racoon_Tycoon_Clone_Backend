@@ -127,7 +127,6 @@ const initalizeBoard = (game) => {
 const addPlayer = (game, player) => {
     game.players.push(player)
     game.messageFeed.push(`${player.name} joined.`)
-
     return game
 }
 
@@ -233,7 +232,7 @@ const handleAuctionRound = (game, bid) => {
     }
 } 
 
-const checkCommodityValues = (game, payload) =>{
+const checkCommodityValues = (game) =>{
     //check if too high
     if(game.commodityValues.wheat > 11){game.commodityValues.wheat = 11}
     if(game.commodityValues.wood > 11){game.commodityValues.wood = 11}
@@ -254,7 +253,6 @@ const checkCommodityValues = (game, payload) =>{
 }
 
 const checkCommodityValueAnimation = (commodity, value, direction) =>{
-    console.log(commodity, value, direction)
     switch(commodity){
         case "wheat":
         case "wood":
@@ -300,7 +298,6 @@ const handleProduce = (game) => {
             }
         }
     }
-    console.log(animationPayload)
     game.animation.payload = animationPayload
 
     //give player commodies
@@ -369,33 +366,30 @@ const handleSellCommodity = (game, sellingCommodity, amount) => {
     let player = game.players[game.turnIndex]
     game.animation.action = "MOVE_COMMODIES"
 
-    //loop through players
-        //if their building array contains one with the name "tradign firm blah blah" that matches the comodity being sold give them the amount in dollars
-    
-        for(let i = 0; i < game.players.length; i++){
-            if(game.players[i].buildings.filter(building => {return building.name === "Coal / Iron Trading Firm"}).length === 1  && sellingCommodity === "coal" || sellingCommodity === "iron"){
-                game.players[i].money += amount
-            }
-            if(game.players[i].buildings.filter(building => {return building.name === "Goods / Luxury Trading Firm"}).length === 1 && sellingCommodity === "goods" || sellingCommodity === "luxury"){
-                game.players[i].money += amount
-            }
-            if(game.players[i].buildings.filter(building => {return building.name === "Wheat / Wood Trading Firm"}).length === 1 && sellingCommodity === "wheat" || sellingCommodity === "wood"){
-                game.players[i].money += amount
-            }
+    for(let i = 0; i < game.players.length; i++){
+        if(game.players[i].buildings.filter(building => {return building.name === "Coal / Iron Trading Firm"}).length === 1  && sellingCommodity === "coal" || sellingCommodity === "iron"){
+            game.players[i].money += amount
         }
+        if(game.players[i].buildings.filter(building => {return building.name === "Goods / Luxury Trading Firm"}).length === 1 && sellingCommodity === "goods" || sellingCommodity === "luxury"){
+            game.players[i].money += amount
+        }
+        if(game.players[i].buildings.filter(building => {return building.name === "Wheat / Wood Trading Firm"}).length === 1 && sellingCommodity === "wheat" || sellingCommodity === "wood"){
+            game.players[i].money += amount
+        }
+    }
 
-        if(player.buildings.filter((building)=>{return building.name === "Export Company"}).length === 1){
-            for( let i = 0; i < 3; i++){
-                if(checkCommodityValueAnimation(sellingCommodity, game.commodityValues[sellingCommodity], true)){
-                    game.commodityValues[sellingCommodity] += 1
-                    if(game.animation.payload[sellingCommodity]){
-                        game.animation.payload[sellingCommodity] += 1
-                    }else{
-                        game.animation.payload[sellingCommodity] = 1
-                    }
+    if(player.buildings.filter((building)=>{return building.name === "Export Company"}).length === 1){
+        for( let i = 0; i < 3; i++){
+            if(checkCommodityValueAnimation(sellingCommodity, game.commodityValues[sellingCommodity], true)){
+                game.commodityValues[sellingCommodity] += 1
+                if(game.animation.payload[sellingCommodity]){
+                    game.animation.payload[sellingCommodity] += 1
+                }else{
+                    game.animation.payload[sellingCommodity] = 1
                 }
             }
         }
+    }
 
     //remove that many of that type of commodity from the current player
     for(let i = 0; i < amount; i++){
@@ -446,8 +440,6 @@ const handleBuyTown = (game) =>{
     player.towns.push(game.avaiableTown)
     game.avaiableTown = game.townDeck[0]? game.townDeck.splice(0,1)[0]: null
     game.players[game.turnIndex] = player
-
-
     return setNextTurn(game)
 }
 
@@ -506,7 +498,7 @@ const countPoints = (player) => {
     for( let i = 0; i < player.towns; i++){
         score += town.specificPrice
     }
-    console.log(player)
+
     let numSkunk = player.railroads.filter((railroad)=>{return railroad.name === "Skunk Works"}).length
     let numFox = player.railroads.filter((railroad)=>{return railroad.name === "Sly Fox"}).length
     let numCat = player.railroads.filter((railroad)=>{return railroad.name === "Fat Cat"}).length
@@ -514,7 +506,6 @@ const countPoints = (player) => {
     let numBear = player.railroads.filter((railroad)=>{return railroad.name === "Top Dog"}).length
     let numTycoon = player.railroads.filter((railroad)=>{return railroad.name === "Tycoon"}).length
 
-    console.log(score)
     switch(numSkunk){
         case 1:
             score += 2
@@ -581,18 +572,9 @@ const countPoints = (player) => {
             score += 25
         default: break
     }
-    console.log(score)
-
 
     score += player.towns.length > player.railroads.length ? player.railroads.length * 2 :  player.towns.length * 2
-
-    console.log(score)
-
-
     score += player.buildings.length
-
-    console.log(score)
-
 
     if(player.buildings.filter(building => {return building.name === "Govenors Mansion"}).length === 1){
         score += player.towns.length
@@ -607,11 +589,7 @@ const countPoints = (player) => {
         score += player.buildings.length
     }
 
-    console.log(score)
-
-
     return score
-
 }
 
 const findWinner = (game) => {
@@ -620,7 +598,6 @@ const findWinner = (game) => {
         game.players[i].score = countPoints(game.players[i])
         playerArray.push(game.players[i])
     }
-
     game.players = playerArray.sort((a,b) => a.score - b.score)
 
     return game
