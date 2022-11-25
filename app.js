@@ -77,7 +77,6 @@ Socketio.on("connection", async socket => {
     socket.on("auctionRound", data => {
         data.game = logic.handleAuctionRound(data.game, data.newBid)
         if(data.game){
-            console.log(data.game)
             Socketio.to(data.game.roomId).emit("updateGame", data)
         }else{
             Socketio.to(socket.id).emit("emitMessage", "Invalid Bid")

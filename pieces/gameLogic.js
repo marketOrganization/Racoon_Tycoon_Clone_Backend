@@ -1,5 +1,4 @@
 const pieces = require('./index')
-const stocks = require('./commodies')
 
 const createProductionCard = () => {
     //function to create a new production card and give it to the current player
@@ -78,7 +77,7 @@ const createTownDeck = (numPlayers, townDeck) => {
 const createRailRoadDeck = (numPlayers, railRoadDeck) => {
     let railroads = []
     if(numPlayers <= 3){
-        railRoadDeck.splice(0, 1)
+        railRoadDeck.splice(0, 4)
         railRoadDeck.splice(railRoadDeck.length - 1, 1)
     }
     for(let i = 0; i < 4; i++){
@@ -94,7 +93,6 @@ const initalizeBoard = (game) => {
     for(let i = 0; i < 6; i++){
         buildingDeckStartUnshuffled.push(pieces.buildings[i])
     }
-    console.log(buildingDeckStartUnshuffled)
     let buildingDeckStartShuffled = shuffle([...buildingDeckStartUnshuffled])
     for(let i = 0; i < game.players.length; i++){
         buildingDeckStart.push(buildingDeckStartShuffled[i])
@@ -157,8 +155,7 @@ const setNextTurn = (game) => {
         game = findWinner(game)
         game.gameOver = true
         game.action = "GAME_OVER"
-        const message = `Game Over!`
-        game.messageFeed.push(message)
+        game.messageFeed.push(`Game Over!`)
         return game
     }else{
         const message = `It is now ${game.players[game.turnIndex].name}'s turn.`
@@ -257,7 +254,6 @@ const checkCommodityValueAnimation = (commodity, value, direction) =>{
         case "wheat":
         case "wood":
             if(value === 12 && direction || value === 1 && !direction){
-                console.log("here")
                 return false
             }
         break
@@ -265,7 +261,6 @@ const checkCommodityValueAnimation = (commodity, value, direction) =>{
         case "iron":
         case "coal":
             if(value === 13 && direction || value === 2 && !direction){
-                console.log("here")
                 return false
             }
         break
@@ -273,7 +268,6 @@ const checkCommodityValueAnimation = (commodity, value, direction) =>{
         case "goods":
         case "luxury":
             if(value === 14 && direction || value === 3 && !direction){
-                console.log("here")
                 return false
             }
         break
@@ -494,87 +488,127 @@ const handleBuyBuilding = (game) => {
 
 const countPoints = (player) => {
     let score = 0;
-
+    console.log("score initial", score)
     for( let i = 0; i < player.towns; i++){
         score += town.specificPrice
     }
 
+    console.log("score after towns", score)
+
+
     let numSkunk = player.railroads.filter((railroad)=>{return railroad.name === "Skunk Works"}).length
     let numFox = player.railroads.filter((railroad)=>{return railroad.name === "Sly Fox"}).length
     let numCat = player.railroads.filter((railroad)=>{return railroad.name === "Fat Cat"}).length
-    let numDog= player.railroads.filter((railroad)=>{return railroad.name === "Big Bear"}).length
-    let numBear = player.railroads.filter((railroad)=>{return railroad.name === "Top Dog"}).length
+    let numBear = player.railroads.filter((railroad)=>{return railroad.name === "Big Bear"}).length
+    let numDog = player.railroads.filter((railroad)=>{return railroad.name === "Top Dog"}).length
     let numTycoon = player.railroads.filter((railroad)=>{return railroad.name === "Tycoon"}).length
+
+    console.log(numSkunk)
+    console.log(numFox)
+    console.log(numCat)
+    console.log(numDog)
+    console.log(numBear)
+    console.log(numTycoon)
 
     switch(numSkunk){
         case 1:
             score += 2
+            break
         case 2:
             score += 5
+            break
         case 3:
             score += 9
+            break
         case 4:
             score += 15
+            break
         default: break
     }
     switch(numFox){
         case 1:
             score += 2
+            break
         case 2:
             score += 5
+            break
         case 3:
             score += 10
+            break
         case 4:
             score += 17
+            break
         default: break
     }
     switch(numCat){
         case 1:
             score += 3
+            break
         case 2:
             score += 7
+            break
         case 3:
             score += 12
+            break
         case 4:
             score += 19
+            break
         default: break
     }
     switch(numDog){
         case 1:
             score += 4
+            break
         case 2:
             score += 9
+            break
         case 3:
             score += 15
+            break
         case 4:
             score += 23
+            break
         default: break
     }
     switch(numBear){
         case 1:
             score += 3
+            break
         case 2:
             score += 7
+            break
         case 3:
             score += 13
+            break
         case 4:
             score += 21
+            break
         default: break
     }
     switch(numTycoon){
         case 1:
             score += 4
+            break
         case 2:
             score += 9
+            break
         case 3:
             score += 16
+            break
         case 4:
             score += 25
+            break
         default: break
     }
 
+    console.log("score after railroads", score)
+
     score += player.towns.length > player.railroads.length ? player.railroads.length * 2 :  player.towns.length * 2
+    console.log("score after towns+railroads", score)
+
     score += player.buildings.length
+    console.log("score after buildings", score)
+
 
     if(player.buildings.filter(building => {return building.name === "Govenors Mansion"}).length === 1){
         score += player.towns.length
@@ -588,6 +622,8 @@ const countPoints = (player) => {
     if(player.buildings.filter(building => {return building.name === "Mayors Office"}).length === 1){
         score += player.buildings.length
     }
+    console.log("score after special buildings", score)
+
 
     return score
 }
