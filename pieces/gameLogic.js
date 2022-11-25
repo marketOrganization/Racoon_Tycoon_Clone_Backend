@@ -77,7 +77,7 @@ const createTownDeck = (numPlayers, townDeck) => {
 const createRailRoadDeck = (numPlayers, railRoadDeck) => {
     let railroads = []
     if(numPlayers <= 3){
-        railRoadDeck.splice(0, 4)
+        railRoadDeck.splice(0, 1)
         railRoadDeck.splice(railRoadDeck.length - 1, 1)
     }
     for(let i = 0; i < 4; i++){
@@ -101,7 +101,8 @@ const initalizeBoard = (game) => {
         buildingDeckEnd.push(pieces.buildings[i])
     }
     game.railRoadDeck = createRailRoadDeck(game.players.length, [...pieces.railroads])
-    game.buildingDeck = buildingDeckStart.concat(shuffle(buildingDeckEnd))
+    //game.buildingDeck = buildingDeckStart.concat(shuffle(buildingDeckEnd))
+    game.buildingDeck = buildingDeckStart.concat(shuffle(buildingDeckEnd)).slice(0,5)
     game.townDeck = createTownDeck(game.players.length, [...pieces.towns])
     game.commodies = [...pieces.commodies]
     game.turnIndex = Math.floor(Math.random() * game.players.length)
@@ -477,7 +478,12 @@ const handleBuyBuilding = (game) => {
     game.messageFeed.push(`${player.name} Purchased ${game.shownBuildings[game.buildingBuyIndex].name} for $${game.shownBuildings[game.buildingBuyIndex].price}`)
     
     //give the building to the player and refill the sold building slot
-    player.buildings.push(...game.shownBuildings.splice(game.buildingBuyIndex, 1, ...game.buildingDeck.splice(0,1)))
+    if(game.buildingDeck.length === 0){
+        player.buildings.push(...game.shownBuildings.splice(game.buildingBuyIndex, 1, null))
+    }else{
+        player.buildings.push(...game.shownBuildings.splice(game.buildingBuyIndex, 1, ...game.buildingDeck.splice(0,1)))
+    }
+
 
     //set player.buyingBuilding back to false and game.buldingBuyIndex = null
     player.buyingBuilding = false
