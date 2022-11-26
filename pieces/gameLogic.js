@@ -353,7 +353,6 @@ const handleProduce = (game) => {
 }
 
 const handleAuctionOut = (game) => {
-    console.log(game.highestBidderIndex)
     if(game.highestBidderIndex === null){
         game.auctionIndex = null
         game.auction = null
