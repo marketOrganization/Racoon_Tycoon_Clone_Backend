@@ -97,11 +97,11 @@ const initalizeBoard = (game) => {
     for(let i = 0; i < game.players.length; i++){
         buildingDeckStart.push(buildingDeckStartShuffled[i])
     }
-    for(let i = 5; i < pieces.buildings.length; i++){
+    for(let i = 6; i < pieces.buildings.length; i++){
         buildingDeckEnd.push(pieces.buildings[i])
     }
     game.railRoadDeck = createRailRoadDeck(game.players.length, [...pieces.railroads])
-    //game.buildingDeck = buildingDeckStart.concat(shuffle(buildingDeckEnd))
+    // game.buildingDeck = buildingDeckStart.concat(shuffle(buildingDeckEnd))
     game.buildingDeck = buildingDeckStart.concat(shuffle(buildingDeckEnd)).slice(0,5)
     game.townDeck = createTownDeck(game.players.length, [...pieces.towns])
     game.commodies = [...pieces.commodies]

@@ -14,7 +14,7 @@ class Building {
       this.price = price;
       this.numberInDeck = numberInDeck;
       this.upgradable = upgradable;
-      this.pointChanger = pointChanger
+      this.pointChanger = pointChanger;
       this.turnChanger = turnChanger;
       this.playerChanger = playerChanger;
       this.imageLink = imageLink;
