@@ -14,15 +14,12 @@ class Building {
       this.price = price;
       this.numberInDeck = numberInDeck;
       this.upgradable = upgradable;
-      this.pointChanger = pointChanger;
+      this.pointChanger = pointChanger
       this.turnChanger = turnChanger;
       this.playerChanger = playerChanger;
       this.imageLink = imageLink;
       this.upgradedImageLink = upgradedImageLink;
       this.upgraded = false;
-    }
-    action() {
-      //methods for the action eahc will if they have one
     }
   }
  const buildings = [
