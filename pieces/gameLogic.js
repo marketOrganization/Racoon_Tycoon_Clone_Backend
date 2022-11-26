@@ -353,8 +353,23 @@ const handleProduce = (game) => {
 }
 
 const handleAuctionOut = (game) => {
-    game.players[game.auctionIndex].inBid = false
-    return setNextBidder(game)
+    if(game.highestBidderIndex === null){
+        game.auctionIndex = null
+        game.auction = null
+        game.bid = 0
+        game.highestBidderIndex = null
+        game.message = null
+        for(let i = 0; i < game.players.length; i++){
+            game.players[i].highestBidder = false
+            game.players[i].inBid = true;
+            game.players[i].isInAuction = false;
+            game.players[i].currBidder = false;
+        }  
+        return game
+    }else{
+        game.players[game.auctionIndex].inBid = false
+        return setNextBidder(game)
+    }
 }
 
 const handleSellCommodity = (game, sellingCommodity, amount) => {
