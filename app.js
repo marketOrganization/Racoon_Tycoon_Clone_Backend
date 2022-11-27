@@ -14,7 +14,6 @@ const Socketio = require("socket.io")(Http, {
 const games = {}
 
 Socketio.on("connection", async socket => {
-    
 
     socket.on("startGame", data => {
         let room = null
@@ -88,14 +87,9 @@ Socketio.on("connection", async socket => {
     })
 
     socket.on("REFRESHED", data => {
-        Socketio.to(data.gameId).emit("PLAYER_REFRESHED")
-        socket.join(data.roomId)
-        socket.to(data.roomId).emit("playerJoined")
-        Socketio.to(socket.id).emit("joinedRoom", data)
+        socket.join(data.gameId)
+        socket.to(data.gameId).emit("playerJoined")
     })
-
-    socket.on("REJOIN_PLAYER")
-
     socket.on("ACTION", game => {
         switch(game.action){
             case "START_AUCTION":
