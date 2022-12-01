@@ -101,8 +101,7 @@ const initalizeBoard = (game) => {
         buildingDeckEnd.push(pieces.buildings[i])
     }
     game.railRoadDeck = createRailRoadDeck(game.players.length, [...pieces.railroads])
-    // game.buildingDeck = buildingDeckStart.concat(shuffle(buildingDeckEnd))
-    game.buildingDeck = buildingDeckStart.concat(shuffle(buildingDeckEnd)).slice(0,5)
+    game.buildingDeck = buildingDeckStart.concat(shuffle(buildingDeckEnd))
     game.townDeck = createTownDeck(game.players.length, [...pieces.towns])
     game.commodies = [...pieces.commodies]
     game.turnIndex = Math.floor(Math.random() * game.players.length)
