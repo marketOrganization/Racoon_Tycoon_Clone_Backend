@@ -86,10 +86,22 @@ Socketio.on("connection", async socket => {
         }
     })
 
-    socket.on("REFRESHED", data => {
-        socket.join(data.gameId)
-        socket.to(data.gameId).emit("playerJoined")
+    socket.on("REJOIN_1", data => {
+        if(Socketio.sockets.adapter.rooms.get(data.gameId)){
+            socket.join(data.gameId)
+            data.socketId = socket.id
+            socket.to(data.gameId).emit("REJOIN_2", data)
+        }
     })
+
+    socket.on("REJOIN_3", (data) => {
+        socket.to(data.socketId).emit("REJOIN_4", data)
+    })
+
+    socket.on("REJOIN_5", (data) => {
+        Socketio.to(data.socketId).emit("REJOIN_6", data)
+    })
+    
     socket.on("ACTION", game => {
         switch(game.action){
             case "START_AUCTION":
