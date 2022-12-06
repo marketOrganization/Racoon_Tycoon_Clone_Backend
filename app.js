@@ -13,6 +13,26 @@ const Socketio = require("socket.io")(Http, {
 
 const games = {}
 
+const checkForInactiveGame = (gameId) => {
+    if(!games[gameId]) return
+    Socketio.sockets.adapter.rooms.get(gameId)? room = Socketio.sockets.adapter.rooms.get(gameId):room = false
+    let peopleInRoom = 0
+    if(room){
+        room.forEach(()=>{
+            peopleInRoom+=1
+        })
+    }
+    if(peopleInRoom){
+        setTimeout(() => {
+            checkForInactiveGame(gameId)
+        }, 120000);
+    }else{
+        console.log("deleted game", gameId)
+        delete games[gameId]
+    }
+}
+
+
 Socketio.on("connection", async socket => {
 
     socket.on("startGame", data => {
@@ -32,6 +52,7 @@ Socketio.on("connection", async socket => {
             let game = logic.initalizeBoard(data.game)
             data.game = game
             games[game.roomId] = game
+            checkForInactiveGame(game.roomId)
             Socketio.to(data.roomId).emit("gameStarted", data)
         }else{
             Socketio.to(data.roomId).emit("invalidRoom", data)
