@@ -66,6 +66,7 @@ Socketio.on("connection", async socket => {
         games[data.roomId] = data.game
         Socketio.to(socket.id).emit("joinedRoom", data)
         }else{
+            data.invalidRoom = "Game Already Exists. Pick Another Name."
             Socketio.to(socket.id).emit("invalidRoom", data)
         }
     })
@@ -80,6 +81,7 @@ Socketio.on("connection", async socket => {
             socket.to(data.roomId).emit("playerJoined")
             Socketio.to(socket.id).emit("joinedRoom", data)
         }else{
+            data.invalidRoom = "Game Does Not Exist."
             Socketio.to(socket.id).emit("invalidRoom", data)
         }
     })
