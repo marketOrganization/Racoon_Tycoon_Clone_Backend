@@ -13,6 +13,26 @@ const Socketio = require("socket.io")(Http, {
 
 const games = {}
 
+const checkForInactiveGame = (gameId) => {
+    if(!games[gameId]) return
+    Socketio.sockets.adapter.rooms.get(gameId)? room = Socketio.sockets.adapter.rooms.get(gameId):room = false
+    let peopleInRoom = 0
+    if(room){
+        room.forEach(()=>{
+            peopleInRoom+=1
+        })
+    }
+    if(peopleInRoom){
+        setTimeout(() => {
+            checkForInactiveGame(gameId)
+        }, 120000);
+    }else{
+        console.log("deleted game", gameId)
+        delete games[gameId]
+    }
+}
+
+
 Socketio.on("connection", async socket => {
 
     socket.on("startGame", data => {
@@ -31,6 +51,8 @@ Socketio.on("connection", async socket => {
         if(peopleInGame == peopleInRoom){
             let game = logic.initalizeBoard(data.game)
             data.game = game
+            games[game.roomId] = game
+            checkForInactiveGame(game.roomId)
             Socketio.to(data.roomId).emit("gameStarted", data)
         }else{
             Socketio.to(data.roomId).emit("invalidRoom", data)
@@ -38,12 +60,13 @@ Socketio.on("connection", async socket => {
     })
 
     socket.on("createRoom", data => {
-        if(!Socketio.sockets.adapter.rooms.get(data.roomId)){
+        if(!games[data.roomId]){
         socket.join(data.roomId)
         data.game = new Game(data.roomId)
         games[data.roomId] = data.game
         Socketio.to(socket.id).emit("joinedRoom", data)
         }else{
+            data.invalidRoom = "Game Already Exists. Pick Another Name."
             Socketio.to(socket.id).emit("invalidRoom", data)
         }
     })
@@ -53,11 +76,12 @@ Socketio.on("connection", async socket => {
     })
 
     socket.on("joinRoom", data => {
-        if(Socketio.sockets.adapter.rooms.get(data.roomId)){
+        if(games[data.roomId]){
             socket.join(data.roomId)
             socket.to(data.roomId).emit("playerJoined")
             Socketio.to(socket.id).emit("joinedRoom", data)
         }else{
+            data.invalidRoom = "Game Does Not Exist."
             Socketio.to(socket.id).emit("invalidRoom", data)
         }
     })
@@ -68,7 +92,8 @@ Socketio.on("connection", async socket => {
 
     socket.on("addNameToGame", data =>{
         const player = new Player(data.name)
-        let game = logic.addPlayer(data.game, player)
+        const game = logic.addPlayer(data.game, player)
+        games[game.roomId] = game
         newData = {
             ...data,
             game: game,
@@ -79,6 +104,7 @@ Socketio.on("connection", async socket => {
 
     socket.on("auctionRound", data => {
         data.game = logic.handleAuctionRound(data.game, data.newBid)
+        games[data.game.roomId] = data.game
         if(data.game){
             Socketio.to(data.game.roomId).emit("updateGame", data)
         }else{
@@ -87,20 +113,18 @@ Socketio.on("connection", async socket => {
     })
 
     socket.on("REJOIN_1", data => {
-        if(Socketio.sockets.adapter.rooms.get(data.gameId)){
+        if(games[data.gameId]){
+            data.game = games[data.gameId]
             socket.join(data.gameId)
             data.socketId = socket.id
-            socket.to(data.gameId).emit("REJOIN_2", data)
+            Socketio.to(socket.id).emit("REJOIN_2", data)
         }
     })
 
     socket.on("REJOIN_3", (data) => {
-        socket.to(data.socketId).emit("REJOIN_4", data)
+        Socketio.to(data.socketId).emit("REJOIN_4", data)
     })
 
-    socket.on("REJOIN_5", (data) => {
-        Socketio.to(data.socketId).emit("REJOIN_6", data)
-    })
     
     socket.on("ACTION", game => {
         switch(game.action){
@@ -136,6 +160,7 @@ Socketio.on("connection", async socket => {
             case "BUY_BUILDING":
                 game = logic.handleBuyBuilding(game)
         }
+        games[game.roomId] = game
         Socketio.to(game.roomId).emit("UPDATE_GAME", game)
     })
 })
